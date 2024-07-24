@@ -1,0 +1,183 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>VPS通过Docker环境安装x-ui，Naive节点和Reality节点公用443端口 | Hexo</title><meta name="author" content="John Doe"><meta name="copyright" content="John Doe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="近期随着临近某特殊时点，原有的几个科学上网节点都开始变得不太正常，不是延迟过高，就是完全不能使用。油管上学习了naive和reality节点架设的方法，因为这两种方法排除了tls in tls的特征，暂时还能正常使用，下面展示下如何用docker创建节点： 创建docker网络docker network create –subnet 192.168.50.0&#x2F;24 –gateway 1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VPS通过Docker环境安装x-ui，Naive节点和Reality节点公用443端口">
+<meta property="og:url" content="http://example.com/2024/07/24/VPS%E9%80%9A%E8%BF%87Docker%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85x-ui%EF%BC%8CNaive%E8%8A%82%E7%82%B9%E5%92%8CReality%E8%8A%82%E7%82%B9%E5%85%AC%E7%94%A8443%E7%AB%AF%E5%8F%A3/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="近期随着临近某特殊时点，原有的几个科学上网节点都开始变得不太正常，不是延迟过高，就是完全不能使用。油管上学习了naive和reality节点架设的方法，因为这两种方法排除了tls in tls的特征，暂时还能正常使用，下面展示下如何用docker创建节点： 创建docker网络docker network create –subnet 192.168.50.0&#x2F;24 –gateway 1">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png">
+<meta property="article:published_time" content="2024-07-24T07:27:38.000Z">
+<meta property="article:modified_time" content="2024-07-24T07:27:38.931Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2024/07/24/VPS%E9%80%9A%E8%BF%87Docker%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85x-ui%EF%BC%8CNaive%E8%8A%82%E7%82%B9%E5%92%8CReality%E8%8A%82%E7%82%B9%E5%85%AC%E7%94%A8443%E7%AB%AF%E5%8F%A3/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Error',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'VPS通过Docker环境安装x-ui，Naive节点和Reality节点公用443端口',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2024-07-24 15:27:38'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">6</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><hr class="custom-hr"/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="Hexo"><span class="site-name">Hexo</span></a></span><div id="menus"><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">VPS通过Docker环境安装x-ui，Naive节点和Reality节点公用443端口</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2024-07-24T07:27:38.000Z" title="Created 2024-07-24 15:27:38">2024-07-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2024-07-24T07:27:38.931Z" title="Updated 2024-07-24 15:27:38">2024-07-24</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="VPS通过Docker环境安装x-ui，Naive节点和Reality节点公用443端口"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>近期随着临近某特殊时点，原有的几个科学上网节点都开始变得不太正常，不是延迟过高，就是完全不能使用。油管上学习了naive和reality节点架设的方法，因为这两种方法排除了tls in tls的特征，暂时还能正常使用，下面展示下如何用docker创建节点：</p>
+<p>创建docker网络<br>docker network create –subnet 192.168.50.0&#x2F;24 –gateway 192.168.50.1 ailun</p>
+<p>创建各个docker容器<br>192.168.50.5 nginx</p>
+<p>docker run –rm -v &#x2F;home&#x2F;nginx:&#x2F;mnt nginx cp &#x2F;etc&#x2F;nginx&#x2F;nginx.conf &#x2F;mnt&#x2F;</p>
+<p>docker run -d<br>–name nginx –network&#x3D;ailun –ip 192.168.50.5<br>-p 80:80<br>-p 443:443<br>-v &#x2F;home&#x2F;nginx&#x2F;conf.d:&#x2F;etc&#x2F;nginx&#x2F;conf.d<br>-v &#x2F;home&#x2F;nginx&#x2F;html:&#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html<br>-v &#x2F;home&#x2F;cert:&#x2F;home&#x2F;cert<br>-v &#x2F;home&#x2F;nginx&#x2F;nginx.conf:&#x2F;etc&#x2F;nginx&#x2F;nginx.conf nginx</p>
+<p>根据这个部署nginx的挂载命令，容器中的路径 &#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html&#x2F; 其实对应了宿主机的 &#x2F;home&#x2F;nginx&#x2F;html&#x2F; 路径，这个路径一般放置网站的根目录文件夹。在宿主机的 &#x2F;home&#x2F;nginx&#x2F;html&#x2F; 目录下创建一个文件夹，以你的域名进行命名，在本例中，文件夹命名为：xui.ailun.ml；</p>
+<p>在 &#x2F;home&#x2F;nginx&#x2F;conf.d&#x2F; 目录下创建一个文件，以 .conf 结尾，在本例中，文件命名为：xui.ailun.ml.conf；</p>
+<p>192.168.50.10 acme</p>
+<p>docker run –rm -itd<br>-v &#x2F;home&#x2F;cert:&#x2F;acme.sh<br>–net&#x3D;ailun –ip 192.168.50.10<br>–name&#x3D;acme.sh<br>neilpang&#x2F;acme.sh daemon</p>
+<p>使用acme.sh 申请证书：</p>
+<p>docker exec acme.sh –issue -d xui.ailun.ml –server letsencrypt –standalone</p>
+<p>打开 &#x2F;home&#x2F;nginx&#x2F;conf.d&#x2F; 中的网站配置文件，添加如下配置：</p>
+<p>listen 8443 ssl http2; # https监听的端口，与stream模块中blog上游服务器配置的端口保持一致</p>
+<p>下面这部分添加到 #禁止访问的文件或目录 这一行的上边<br>ssl_certificate &#x2F;home&#x2F;cert&#x2F;path&#x2F;fullchain.pem; # 更改为证书所在路径，一般是fullchain.pem文件<br>ssl_certificate_key &#x2F;home&#x2F;cert&#x2F;path&#x2F;privkey.pem; # 更改为私钥所在路径，一般是privkey.pem文件<br>ssl_protocols TLSv1.1 TLSv1.2 TLSv1.3;<br>ssl_ciphers EECDH+CHACHA20:EECDH+CHACHA20-draft:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5;<br>ssl_prefer_server_ciphers on;<br>ssl_session_cache shared:SSL:10m;<br>ssl_session_timeout 10m;<br>add_header Strict-Transport-Security “max-age&#x3D;31536000”;</p>
+<p>192.168.50.15 xui</p>
+<p>cd &#x2F;home &amp;&amp; mkdir x-ui &amp;&amp; cd x-ui</p>
+<p>docker run -itd –network&#x3D;ailun –ip 192.168.50.15</p>
+<p>-v $PWD&#x2F;db&#x2F;:&#x2F;home&#x2F;x-ui&#x2F;</p>
+<p>–name x-ui –restart&#x3D;unless-stopped</p>
+<p>enwaiax&#x2F;x-ui:alpha-zh</p>
+<p>浏览器访问 sea.anqi.ml 即可访问到xui面板，默认用户与密码都为 admin；进入建议即使修改密码。</p>
+<p>注意：点击“面板设置”后，xui面板会自动修改买面板访问路径，请记住此路径（当然也可以在面板设置中自定义此路径）。</p>
+<p>192.168.50.20 naive</p>
+<p>apt update</p>
+<p>apt install golang-go ca-certificates</p>
+<p>go install github.com&#x2F;caddyserver&#x2F;xcaddy&#x2F;cmd&#x2F;xcaddy@latest</p>
+<p>~&#x2F;go&#x2F;bin&#x2F;xcaddy build –with github.com&#x2F;caddyserver&#x2F;forwardproxy@caddy2&#x3D;github.com&#x2F;klzgrad&#x2F;forwardproxy@naive</p>
+<p>在编译好的caddy程序的同级目录下创建一个Caddyfile文件：（由于做了挂载，这个目录对应了宿主机的 &#x2F;home&#x2F;naiveproxy 目录）</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a href="http://example.com">John Doe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="http://example.com/2024/07/24/VPS%E9%80%9A%E8%BF%87Docker%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85x-ui%EF%BC%8CNaive%E8%8A%82%E7%82%B9%E5%92%8CReality%E8%8A%82%E7%82%B9%E5%85%AC%E7%94%A8443%E7%AB%AF%E5%8F%A3/">http://example.com/2024/07/24/VPS%E9%80%9A%E8%BF%87Docker%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85x-ui%EF%BC%8CNaive%E8%8A%82%E7%82%B9%E5%92%8CReality%E8%8A%82%E7%82%B9%E5%85%AC%E7%94%A8443%E7%AB%AF%E5%8F%A3/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/07/24/VPS%E9%87%8D%E8%A3%85%EF%BC%8C%E4%B8%80%E9%94%AE%E6%90%AD%E5%BB%BAx-ui%E7%8E%AF%E5%A2%83%EF%BC%88docker%EF%BC%89%EF%BC%8C%E5%8F%AF%E5%BB%BAreality%E8%8A%82%E7%82%B9/" title="VPS重装，一键搭建x-ui环境（docker），可建reality节点"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">Previous</div><div class="prev_info">VPS重装，一键搭建x-ui环境（docker），可建reality节点</div></div></a></div><div class="next-post pull-right"><a href="/2024/07/24/VPS%E4%B8%80%E9%94%AEDD%E9%87%8D%E8%A3%85%E7%B3%BB%E7%BB%9F/" title="VPS一键DD重装系统"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">Next</div><div class="next_info">VPS一键DD重装系统</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">John Doe</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">6</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/07/24/UnRaid%E9%AB%98%E7%BA%A7%E6%95%99%E7%A8%8B%EF%BC%9AVM%E5%AE%89%E8%A3%85%E9%BB%91%E7%BE%A4%E6%99%96%EF%BC%8C%E7%9C%9F%E5%A5%BD%E7%94%A8%EF%BC%81/" title="UnRaid高级教程：VM安装黑群晖，真好用！">UnRaid高级教程：VM安装黑群晖，真好用！</a><time datetime="2024-07-24T07:28:47.000Z" title="Created 2024-07-24 15:28:47">2024-07-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/07/24/VPS%E6%97%A5%E5%B8%B8%E5%91%BD%E4%BB%A4/" title="VPS日常命令">VPS日常命令</a><time datetime="2024-07-24T07:28:27.000Z" title="Created 2024-07-24 15:28:27">2024-07-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/07/24/VPS%E9%87%8D%E8%A3%85%EF%BC%8C%E4%B8%80%E9%94%AE%E6%90%AD%E5%BB%BAx-ui%E7%8E%AF%E5%A2%83%EF%BC%88docker%EF%BC%89%EF%BC%8C%E5%8F%AF%E5%BB%BAreality%E8%8A%82%E7%82%B9/" title="VPS重装，一键搭建x-ui环境（docker），可建reality节点">VPS重装，一键搭建x-ui环境（docker），可建reality节点</a><time datetime="2024-07-24T07:27:56.000Z" title="Created 2024-07-24 15:27:56">2024-07-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/07/24/VPS%E9%80%9A%E8%BF%87Docker%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85x-ui%EF%BC%8CNaive%E8%8A%82%E7%82%B9%E5%92%8CReality%E8%8A%82%E7%82%B9%E5%85%AC%E7%94%A8443%E7%AB%AF%E5%8F%A3/" title="VPS通过Docker环境安装x-ui，Naive节点和Reality节点公用443端口">VPS通过Docker环境安装x-ui，Naive节点和Reality节点公用443端口</a><time datetime="2024-07-24T07:27:38.000Z" title="Created 2024-07-24 15:27:38">2024-07-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/07/24/VPS%E4%B8%80%E9%94%AEDD%E9%87%8D%E8%A3%85%E7%B3%BB%E7%BB%9F/" title="VPS一键DD重装系统">VPS一键DD重装系统</a><time datetime="2024-07-24T07:27:05.000Z" title="Created 2024-07-24 15:27:05">2024-07-24</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By John Doe</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="Back To Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
